@@ -27,5 +27,5 @@ Example:
                             opacity: 0.3 }]);
     // ...
     t[2].opacity = 0.4;
-    t[0].x++;
+    t[0].start.x++;
     // ...
