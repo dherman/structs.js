@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+LIBS='-f ../lib/handler.js -f ../lib/function.js -f ../lib/structs.js'
+SETUP='var console = { log: print }'
+WRU='-f ./wru.console.max.js'
+
+if [[ "$1" == "-i" ]]; then
+  exec js $LIBS -e "$SETUP" $WRU -e 'wru.test = function() {}' -f ./tests.js -i
+else
+  exec js $LIBS -e "$SETUP" $WRU -f ./tests.js
+fi
