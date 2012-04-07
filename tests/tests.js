@@ -1,4 +1,4 @@
-var { uint8, uint16, uint32, int8, int16, int32, struct, array, object, pointer, any } = Structs;
+var { TypedBuffer, uint8, uint16, uint32, int8, int16, int32, struct, array, object, pointer, any } = Structs;
 
 function buildArray(n) {
     var result = [];
@@ -15,6 +15,10 @@ function throws(f) {
         return true;
     }
 }
+
+var Point = struct({ x: uint32, y: uint32 });
+var Segment = struct({ start: Point, end: Point });
+var PointRefs = struct({ ref1: pointer(Point), ref2: pointer(Point) });
 
 wru.test([ {
     name: "uint8(0)...uint8(255)",
@@ -108,13 +112,7 @@ wru.test([ {
         wru.assert("2147483648", int32(2147483648) === -2147483648);
         wru.assert("2147483649", int32(2147483649) === -2147483647);
     }
-} ]);
-
-var Point = struct({ x: uint32, y: uint32 });
-var Segment = struct({ start: Point, end: Point });
-var PointRefs = struct({ ref1: pointer(Point), ref2: pointer(Point) });
-
-wru.test({
+}, {
     name: "copy vs ref",
     test: function() {
         var start = new Point({ x: 0, y: 0 });
@@ -123,6 +121,31 @@ wru.test({
         var t = new PointRefs({ ref1: start, ref2: end });
         end.y++;
         wru.assert(s.end.y === 10);
-        wru.assert(t.end.y === 11);
+        wru.assert(t.ref2.y === 11);
     }
-});
+}, {
+    name: "unsized array type",
+    test: function() {
+        var A = array(uint32);
+        var a = new A(16);
+        wru.assert(a.length === 16);
+        wru.assert(a[0] === 0);
+        wru.assert(a[12] === 0);
+        a[12] = 17;
+        wru.assert(a[0] === 0);
+        wru.assert(a[12] === 17);
+    }
+}, {
+    name: "sized array type",
+    test: function() {
+        var A = array(uint32, 16);
+        var a = new A();
+        wru.assert(a.length === 16);
+        wru.assert(a.length === 16);
+        wru.assert(a[0] === 0);
+        wru.assert(a[12] === 0);
+        a[12] = 17;
+        wru.assert(a[0] === 0);
+        wru.assert(a[12] === 17);
+    }
+} ]);
