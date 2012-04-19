@@ -35,7 +35,7 @@ t[0].start.x++;
 Example:
 
 ```javascript
-var { struct, any, uint32, float32, object } = Structs;
+var { struct, uint32, float32, object } = Structs;
 
 var Widget = struct({ foo: uint32, bar: float32, baz: object });
 var w = new Widget;
