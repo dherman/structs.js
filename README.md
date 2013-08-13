@@ -1,6 +1,6 @@
 # structs.js
 
-A [prolyfill](http://prolyfill.org) for the ES6 [typed/structured objects](http://wiki.ecmascript.org/doku.php?id=harmony:typed_objects) API.
+A [prollyfill](http://prollyfill.org) for the ES6 [typed/structured objects](http://wiki.ecmascript.org/doku.php?id=harmony:typed_objects) API.
 
 Depends on proxies.
 
