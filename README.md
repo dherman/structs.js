@@ -1,8 +1,6 @@
 # structs.js
 
-Written by [Dave Herman](http://calculist.org)
-
-A prototype implementation of the ECMAScript [Binary Data](http://wiki.ecmascript.org/doku.php?id=strawman:binary_data) API.
+A [prolyfill](http://prolyfill.org) for the ES6 [typed/structured objects](http://wiki.ecmascript.org/doku.php?id=harmony:typed_objects) API.
 
 Depends on proxies.
 
@@ -45,7 +43,5 @@ w.foo = 12;
 ```
 
 ## License
-
-Copyright © 2012 Dave Herman
 
 Licensed under the [MIT License](http://mit-license.org).
