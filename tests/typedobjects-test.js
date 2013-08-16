@@ -1,3 +1,4 @@
+"use strict";
 var int8 = TypedObjects.int8;
 var int16 = TypedObjects.int16;
 var int32 = TypedObjects.int32;
@@ -8,6 +9,7 @@ var float32 = TypedObjects.float32;
 var float64 = TypedObjects.float64;
 var uint8clamped = TypedObjects.uint8clamped;
 var StructType = TypedObjects.StructType;
+var ArrayType = TypedObjects.ArrayType;
 
 wru.test([ {
     name: "first test",
@@ -55,6 +57,18 @@ wru.test([ {
       wru.assert(s.i32 === 0x7FFFFFFF);
       wru.assert(s.f32 === 1.5);
       wru.assert(s.f64 === 1.5);
+
+      var s0 = new S();
+      wru.assert(s0.u8 === 0);
+      wru.assert(s0.i8 === 0);
+      wru.assert(s0.u8c === 0);
+      wru.assert(s0.u16 === 0);
+      wru.assert(s0.i16 === 0);
+      wru.assert(s0.u32 === 0);
+      wru.assert(s0.i32 === 0);
+      wru.assert(s0.f32 === 0);
+      wru.assert(s0.f64 === 0);
+
     } }, {
     name: "ArrayBuffer constructor",
     test: function() {
@@ -111,5 +125,71 @@ wru.test([ {
       wru.assert(u8a[100] === 3);
       wru.assert(u8a[104] === 1);
       wru.assert(u8a[108] === 2);
+    } }, {
+    name: "ArrayType: simple",
+    test: function() {
+      var A = new ArrayType(uint8, 10);
+      var a = new A();
+      var i;
+      print("a.length = " + a.length);
+      wru.assert(a.length === 10);
+      for (i = 0; i < 10; i++) a[i] = i;
+      for (i = 0; i < 10; i++) {
+        wru.assert(a[i] === i);
+      }
+      var a1 = new A([10, 9, 8, 7, 6 , 5, 4, 3, 2, 1]);
+      wru.assert(a1.length === 10);
+      for (i = 0; i < 10; i++)
+        wru.assert(a1[i] === 10 - i);
+    } }, {
+    name: "ArrayType: uint16",
+    test: function() {
+      var i;
+      var A = new ArrayType(uint16, 10);
+      var a = new A();
+      wru.assert(a.length === 10);
+      for (i = 0; i < 10; i++) a[i] = i;
+      for (i = 0; i < 10; i++) {
+        wru.assert(a[i] === i);
+      }
+      var a1 = new A([10, 9, 8, 7, 6 , 5, 4, 3, 2, 1]);
+      wru.assert(a1.length === 10);
+      for (i = 0; i < 10; i++)
+        wru.assert(a1[i] === 10 - i);
+    } }, {
+    name: "ArrayType: struct",
+    test: function() {
+      var i;
+      var S = new StructType({ x : uint8, y : uint32 });
+      var initializer = [];
+      for(i = 0; i < 10; i++) {
+        initializer.push(new S({ x : 2*i, y : 2*i + 1}));        
+      }    
+      var A = new ArrayType(S, 10);
+      var a = new A(initializer);
+      wru.assert(a.length ===10);
+      for (i = 0; i < 10; i++) {
+        print("a[" + i + "].x = " + a[i].x);
+        print("a[" + i + "].y = " + a[i].y);
+        wru.assert(a[i].x === 2*i);
+        wru.assert(a[i].y === 2*i + 1);
+      }
+
+      var a1 = new A();
+      for (i = 0; i < 10; i++) {
+        a1[i] = initializer[i];
+      }
+      wru.assert(a1.length ===10);
+      for (i = 0; i < 10; i++) {
+        //wru.assert(a1[i].x === 2*i);
+        //wru.assert(a1[i].y === 2*i + 1);
+      }
+    } }, {
+    name: "ArrayType: single struct",
+    test: function() {
+      var S = new StructType({x : uint8});
+      var A = new ArrayType(S, 1);
+      var a = new A([{ x : 10}]);
+      wru.assert(a[0].x === 10);
     } }
 ]);
