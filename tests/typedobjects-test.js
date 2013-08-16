@@ -131,7 +131,6 @@ wru.test([ {
       var A = new ArrayType(uint8, 10);
       var a = new A();
       var i;
-      print("a.length = " + a.length);
       wru.assert(a.length === 10);
       for (i = 0; i < 10; i++) a[i] = i;
       for (i = 0; i < 10; i++) {
@@ -169,8 +168,6 @@ wru.test([ {
       var a = new A(initializer);
       wru.assert(a.length ===10);
       for (i = 0; i < 10; i++) {
-        print("a[" + i + "].x = " + a[i].x);
-        print("a[" + i + "].y = " + a[i].y);
         wru.assert(a[i].x === 2*i);
         wru.assert(a[i].y === 2*i + 1);
       }
@@ -181,8 +178,8 @@ wru.test([ {
       }
       wru.assert(a1.length ===10);
       for (i = 0; i < 10; i++) {
-        //wru.assert(a1[i].x === 2*i);
-        //wru.assert(a1[i].y === 2*i + 1);
+        wru.assert(a1[i].x === 2*i);
+        wru.assert(a1[i].y === 2*i + 1);
       }
     } }, {
     name: "ArrayType: single struct",
