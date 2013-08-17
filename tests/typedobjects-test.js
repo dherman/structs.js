@@ -188,5 +188,118 @@ wru.test([ {
       var A = new ArrayType(S, 1);
       var a = new A([{ x : 10}]);
       wru.assert(a[0].x === 10);
+    } }, {
+    name: "uint8(0)...uint8(255)",
+    test: function() {
+        for (var i = 0; i <= 255; i++)
+            wru.assert(uint8(i) === i);
+    } }, {
+    name: "uint8(256)...uint8(511)",
+    test: function() {
+        for (var i = 256; i <= 511; i++)
+            wru.assert(uint8(i) === (i - 256));
+    } }, {
+    name: "uint8(-256)...uint8(-1)",
+    test: function() {
+        for (var i = -256; i <= -1; i++)
+            wru.assert(uint8(i) === (i + 256));
+    } }, {
+    name: "uint16",
+    test: function() {
+        wru.assert("-65537", uint16(-65537) === 65535);
+        wru.assert("-65536", uint16(-65536) === 0);
+        wru.assert("-65535", uint16(-65535) === 1);
+        wru.assert("-2", uint16(-2) === 65534);
+        wru.assert("-1", uint16(-1) === 65535);
+        wru.assert("0", uint16(0) === 0);
+        wru.assert("1", uint16(1) === 1);
+        wru.assert("65535", uint16(65535) === 65535);
+        wru.assert("65536", uint16(65536) === 0);
+        wru.assert("65537", uint16(65537) === 1);
+    } }, {
+    name: "uint32",
+    test: function() {
+        wru.assert("-4294967297", uint32(-4294967297) === 4294967295);
+        wru.assert("-4294967296", uint32(-4294967296) === 0);
+        wru.assert("-4294967295", uint32(-4294967295) === 1);
+        wru.assert("-2", uint32(-2) === 4294967294);
+        wru.assert("-1", uint32(-1) === 4294967295);
+        wru.assert("0", uint32(0) === 0);
+        wru.assert("1", uint32(1) === 1);
+        wru.assert("4294967295", uint32(4294967295) === 4294967295);
+        wru.assert("4294967296", uint32(4294967296) === 0);
+        wru.assert("4294967297", uint32(4294967297) === 1);
+    } }, {
+    name: "int8(-128)...int8(127)",
+    test: function() {
+        for (var i = -128; i <= 127; i++)
+            wru.assert(int8(i) === i);
+    } }, {
+    name: "int8(128)...int8(383)",
+    test: function() {
+        for (var i = 128; i <= 383; i++)
+            wru.assert(int8(i) === (i - 256));
+    } }, {
+    name: "int8(-384)...int8(-129)",
+    test: function() {
+        for (var i = -384; i <= -129; i++)
+            wru.assert(int8(i) === (i + 256));
+    } }, {
+    name: "int16",
+    test: function() {
+        wru.assert("-32769", int16(-32769) === 32767);
+        wru.assert("-32768", int16(-32768) === -32768);
+        wru.assert("-32767", int16(-32767) === -32767);
+        wru.assert("-2", int16(-2) === -2);
+        wru.assert("-1", int16(-1) === -1);
+        wru.assert("0", int16(0) === 0);
+        wru.assert("1", int16(1) === 1);
+        wru.assert("32767", int16(32767) === 32767);
+        wru.assert("32768", int16(32768) === -32768);
+        wru.assert("32769", int16(32769) === -32767);
+    } }, {
+    name: "int32",
+    test: function() {
+        wru.assert("-2147483649", int32(-2147483649) === 2147483647);
+        wru.assert("-2147483648", int32(-2147483648) === -2147483648);
+        wru.assert("-2147483647", int32(-2147483647) === -2147483647);
+        wru.assert("-2", int32(-2) === -2);
+        wru.assert("-1", int32(-1) === -1);
+        wru.assert("0", int32(0) === 0);
+        wru.assert("1", int32(1) === 1);
+        wru.assert("2147483647", int32(2147483647) === 2147483647);
+        wru.assert("2147483648", int32(2147483648) === -2147483648);
+        wru.assert("2147483649", int32(2147483649) === -2147483647);
+    } }, {
+    name: "Variable sized ArrayType",
+    test: function() {
+      var uint32Array = new ArrayType(uint32);
+      var u32a = new uint32Array(10);
+      wru.assert(u32a.length === 10);
+      u32a[0] = 11;
+      u32a[7] = 56;
+      wru.assert(u32a[0] === 11);
+      wru.assert(u32a[7] === 56);
+    } }, {
+    name: "ArrayType in a struct",
+    test: function() {
+      var A = new ArrayType(uint8, 3);
+      var S = new StructType({ left : A, right : A });
+      var s = new S({ left : [ 1, 2, 3 ], right : [ 257, 258, 259 ] });
+      wru.assert(s.left.length == 3);
+      wru.assert(s.right.length == 3);
+      for (var i = 0; i < 3; i++) {
+        wru.assert(s.left[i] === s.right[i]);
+      }
+    } }, {
+    name: "ArrayType in a struct: simple",
+    test: function() {
+      var A = new ArrayType(uint8, 3);
+      var S = new StructType({ z : uint32, left : A });
+      var s = new S({ left : [ 1, 2, 3 ]});
+      wru.assert(s.left.length == 3);
+      for (var i = 0; i < 3; i++) {
+        wru.assert(s.left[i] === i + 1);
+      }
     } }
 ]);
