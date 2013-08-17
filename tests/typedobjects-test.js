@@ -132,6 +132,8 @@ wru.test([ {
       var a = new A();
       var i;
       wru.assert(a.length === 10);
+      wru.assert(a.byteLength === 10);
+      wru.assert(a.byteOffset === 0);
       for (i = 0; i < 10; i++) a[i] = i;
       for (i = 0; i < 10; i++) {
         wru.assert(a[i] === i);
