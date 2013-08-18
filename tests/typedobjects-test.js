@@ -103,6 +103,8 @@ wru.test([ {
       var S = new StructType({ x : uint8, y : uint32 });
       var S1 = new StructType({ z : uint16, s : S });
       var s1 = new S1({ z : 3, s : { x : 1, y : 2 } });
+      wru.assert(S.storage(s1.s).byteOffset === 4);
+      wru.assert(S.storage(s1.s).byteLength === 8);
       wru.assert(s1.s.x === 1 && s1.s.y === 2 && s1.z === 3);
       s1.s.x = 2;
       wru.assert(s1.s.x === 2 && s1.s.y === 2 && s1.z === 3);
@@ -290,6 +292,8 @@ wru.test([ {
       var s = new S({ left : [ 1, 2, 3 ], right : [ 257, 258, 259 ] });
       wru.assert(s.left.length == 3);
       wru.assert(s.right.length == 3);
+      wru.assert(s.right.byteOffset === 3);
+      wru.assert(s.right.byteLength === 3);
       for (var i = 0; i < 3; i++) {
         wru.assert(s.left[i] === s.right[i]);
       }
