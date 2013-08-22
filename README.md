@@ -2,18 +2,16 @@
 
 A [prollyfill](http://prollyfill.org) for the ES6 [typed/structured objects](http://wiki.ecmascript.org/doku.php?id=harmony:typed_objects) API.
 
-Depends on proxies.
-
-To use, include all files in the `lib` directory.
+To use, include typedobjects.js in the `lib` directory.
 
 Example:
 
 ```javascript
-var { struct, array, uint32, float32 } = Structs;
+var { StructType, ArrayType, uint32, float32 } = TypedObjects;
 
-var Point = struct({ x: uint32, y: uint32 });
-var Segment = struct({ start: Point, end: Point, opacity: float32 });
-var Triangle = array(Segment, 3);
+var Point = new StructType({ x: uint32, y: uint32 });
+var Segment = new StructType({ start: Point, end: Point, opacity: float32 });
+var Triangle = new ArrayType(Segment, 3);
 
 var t = new Triangle([{ start: { x: 0, y: 0 },
                         end: { x: 10, y: 0 },
@@ -31,11 +29,12 @@ t[0].start.x++;
 ```
 
 Example:
+(future example, 'object' type is not implemented yet) 
 
 ```javascript
-var { struct, uint32, float32, object } = Structs;
+var { StructType, uint32, float32, object } = TypedObjects;
 
-var Widget = struct({ foo: uint32, bar: float32, baz: object });
+var Widget = new StructType({ foo: uint32, bar: float32, baz: object });
 var w = new Widget;
 w.baz // null
 w.baz = { quux: "xyzzx" };
