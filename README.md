@@ -41,6 +41,9 @@ w.baz = { quux: "xyzzx" };
 w.foo = 12;
 ```
 
+Note: lib/structs.js contains previous polyfill for a previous version of the spec.
+To use, include all files from lib directory (implementation depends on proxies).
+
 ## License
 
 Licensed under the [MIT License](http://mit-license.org).
