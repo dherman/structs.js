@@ -272,6 +272,21 @@ wru.test([ {
       wru.assert(S.storage !== undefined);
       wru.assert(S1.storage === undefined);
       wru.assert(throws(function() { S.storage(s1.s); }));
+    } }, {
+    name: "Opaque array",
+    test: function() {
+      var A = new ArrayType(object, 100);
+      var o = {};
+      var a = new A();
+      for(var i = 0; i < 100; i++) {
+        a[i] = o;
+      }
+      wru.assert(a.length === 100);
+      wru.assert(a.byteLength === undefined);
+      wru.assert(a.byteOffset === undefined);
+      for(var i = 0; i < 100; i++) {
+        wru.assert(a[i] === o);
+      }
     } }
 
 ]);
