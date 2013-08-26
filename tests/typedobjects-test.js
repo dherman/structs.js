@@ -8,8 +8,22 @@ var uint32 = TypedObjects.uint32;
 var float32 = TypedObjects.float32;
 var float64 = TypedObjects.float64;
 var uint8clamped = TypedObjects.uint8clamped;
+
+var any = TypedObjects.any;
+var object = TypedObjects.object;
+var string = TypedObjects.string;
+
 var StructType = TypedObjects.StructType;
 var ArrayType = TypedObjects.ArrayType;
+
+function throws(f) {
+    try {
+        f();
+        return false;
+    } catch (e) {
+        return true;
+    }
+}
 
 wru.test([ {
     name: "first test",
@@ -225,5 +239,39 @@ wru.test([ {
       for (var i = 0; i < 3; i++) {
         wru.assert(s.left[i] === i + 1);
       }
+    } }, {
+    name: "Opaque types: simple",
+    test: function() {
+      var S = new StructType({x : uint8, o : object});
+      var o = {};
+      var s = new S({ x : 5, o : o });
+      wru.assert(s.x === 5);
+      wru.assert(s.o === o);
+      wru.assert(S.storage === undefined);
+    } }, {
+    name: "Opaque types: mixed",
+    test: function() {
+      var S = new StructType({x : uint8, o : object});
+      var S1 = new StructType({ s : S, x : uint32});
+      var o = {};
+      var s1 = new S1({s : { x : 5, o : o }, x : 1024});
+      wru.assert(s1.x === 1024);
+      wru.assert(s1.s.o === o);
+      wru.assert(s1.s.x === 5);
+      wru.assert(S1.storage === undefined);
+    } }, {
+    name: "Opaque types: opaque storage",
+    test: function() {
+      var S = new StructType({x : uint8, y : uint32 });
+      var S1 = new StructType({ s : S, o : object});
+      var o = {};
+      var s1 = new S1({s : { x : 5, y : 1024 }, o : o});
+      wru.assert(s1.s.x === 5);
+      wru.assert(s1.s.y === 1024);
+      wru.assert(s1.o === o);
+      wru.assert(S.storage !== undefined);
+      wru.assert(S1.storage === undefined);
+      wru.assert(throws(function() { S.storage(s1.s); }));
     } }
+
 ]);
