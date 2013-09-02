@@ -29,6 +29,16 @@ wru.test([ {
     name: "first test",
     test: function() {
       var Point = new StructType( { x : uint8, y : uint8 });
+
+      wru.assert(Point.variable === false);
+      wru.assert(Point.opaque === false);
+      wru.assert(Point.byteLength === 2);
+      wru.assert(Point.byteAlignment === 1);
+      wru.assert(Point.fieldOffsets.x === 0);
+      wru.assert(Point.fieldOffsets.y === 1);
+      wru.assert(Point.fieldTypes.x === uint8);
+      wru.assert(Point.fieldTypes.y === uint8);
+
       var p1 = new Point({ x : 1, y : 1});
       wru.assert(p1.x === 1);
       wru.assert(p1.y === 1);
@@ -37,12 +47,32 @@ wru.test([ {
     test: function() {
       var S = new StructType( { x : uint8, y : uint32 } );
       var s = new S( { x : 255, y : 1024 } );
+
+      wru.assert(S.variable === false);
+      wru.assert(S.opaque === false);
+      wru.assert(S.byteLength === 8);
+      wru.assert(S.byteAlignment === 4);
+      wru.assert(S.fieldOffsets.x === 0);
+      wru.assert(S.fieldOffsets.y === 4);
+      wru.assert(S.fieldTypes.x === uint8);
+      wru.assert(S.fieldTypes.y === uint32);
+
       wru.assert(s.x === 255);
       wru.assert(s.y === 1024);
     } }, {    
     name: "alignment 2",
     test: function() {
       var S = new StructType( { x : uint32, y : uint8 } );
+
+      wru.assert(S.variable === false);
+      wru.assert(S.opaque === false);
+      wru.assert(S.byteLength === 8);
+      wru.assert(S.byteAlignment === 4);
+      wru.assert(S.fieldOffsets.x === 0);
+      wru.assert(S.fieldOffsets.y === 4);
+      wru.assert(S.fieldTypes.x === uint32);
+      wru.assert(S.fieldTypes.y === uint8);
+
       var s = new S( { x : 1024, y : 255 } );
       wru.assert(s.x === 1024);
       wru.assert(s.y === 255);
@@ -59,6 +89,32 @@ wru.test([ {
               i32 : int32,
               f32 : float32,
               f64 : float64 });
+      
+      wru.assert(S.variable === false);
+      wru.assert(S.opaque === false);
+      wru.assert(S.byteLength === 32);
+      wru.assert(S.byteAlignment === 8);
+
+      wru.assert(S.fieldOffsets.u8 === 0);
+      wru.assert(S.fieldOffsets.i8 === 1);
+      wru.assert(S.fieldOffsets.u8c === 2);
+      wru.assert(S.fieldOffsets.u16 === 4);
+      wru.assert(S.fieldOffsets.i16 === 6);
+      wru.assert(S.fieldOffsets.u32 === 8);
+      wru.assert(S.fieldOffsets.i32 === 12);
+      wru.assert(S.fieldOffsets.f32 === 16);
+      wru.assert(S.fieldOffsets.f64 === 24);
+      
+      wru.assert(S.fieldTypes.u8 === uint8);
+      wru.assert(S.fieldTypes.i8 === int8);
+      wru.assert(S.fieldTypes.u8c === uint8clamped);
+      wru.assert(S.fieldTypes.u16 === uint16);
+      wru.assert(S.fieldTypes.i16 === int16);
+      wru.assert(S.fieldTypes.u32 === uint32);
+      wru.assert(S.fieldTypes.i32 === int32);
+      wru.assert(S.fieldTypes.f32 === float32);
+      wru.assert(S.fieldTypes.f64 === float64);
+      
       var s = new S({ u8 : 255, i8 : 127, u8c : 1024, u16 : 0xFFFF, i16 : 0x7FFF,
                       u32 : 0xFFFFFFFF, i32 : 0x7FFFFFFF,
                       f32 : 1.5, f64 : 1.5 });
@@ -116,6 +172,18 @@ wru.test([ {
     test: function() {
       var S = new StructType({ x : uint8, y : uint32 });
       var S1 = new StructType({ z : uint16, s : S });
+
+      wru.assert(S1.variable === false);
+      wru.assert(S1.opaque === false);
+      wru.assert(S1.byteLength === 12);
+      wru.assert(S1.byteAlignment === 4);
+
+      wru.assert(S1.fieldOffsets.z === 0);
+      wru.assert(S1.fieldOffsets.s === 4);
+
+      wru.assert(S1.fieldTypes.z === uint16);
+      wru.assert(S1.fieldTypes.s === S);
+
       var s1 = new S1({ z : 3, s : { x : 1, y : 2 } });
       wru.assert(S.storage(s1.s).byteOffset === 4);
       wru.assert(S.storage(s1.s).byteLength === 8);
@@ -145,6 +213,13 @@ wru.test([ {
     name: "ArrayType: simple",
     test: function() {
       var A = new ArrayType(uint8, 10);
+
+      wru.assert(A.variable === false);
+      wru.assert(A.opaque === false);
+      wru.assert(A.byteLength === 10);
+      wru.assert(A.byteAlignment === 1);
+      wru.assert(A.elementType === uint8);
+
       var a = new A();
       var i;
       wru.assert(a.length === 10);
@@ -163,6 +238,13 @@ wru.test([ {
     test: function() {
       var i;
       var A = new ArrayType(uint16, 10);
+
+      wru.assert(A.variable === false);
+      wru.assert(A.opaque === false);
+      wru.assert(A.byteLength === 20);
+      wru.assert(A.byteAlignment === 2);
+      wru.assert(A.elementType === uint16);
+
       var a = new A();
       wru.assert(a.length === 10);
       for (i = 0; i < 10; i++) a[i] = i;
@@ -183,6 +265,13 @@ wru.test([ {
         initializer.push(new S({ x : 2*i, y : 2*i + 1}));        
       }    
       var A = new ArrayType(S, 10);
+
+      wru.assert(A.variable === false);
+      wru.assert(A.opaque === false);
+      wru.assert(A.byteLength === 80);
+      wru.assert(A.byteAlignment === 4);
+      wru.assert(A.elementType === S);
+      
       var a = new A(initializer);
       wru.assert(a.length ===10);
       for (i = 0; i < 10; i++) {
@@ -210,6 +299,13 @@ wru.test([ {
     name: "Variable sized ArrayType",
     test: function() {
       var uint32Array = new ArrayType(uint32);
+
+      wru.assert(uint32Array.variable === true);
+      wru.assert(uint32Array.opaque == false);
+      wru.assert(uint32Array.byteAlignment === 4);
+      wru.assert(uint32Array.byteLength === undefined);
+      wru.assert(uint32Array.elementType === uint32);
+
       var u32a = new uint32Array(10);
       wru.assert(u32a.length === 10);
       u32a[0] = 11;
@@ -222,6 +318,13 @@ wru.test([ {
       var A = new ArrayType(uint8, 3);
       var S = new StructType({ left : A, right : A });
       var s = new S({ left : [ 1, 2, 3 ], right : [ 257, 258, 259 ] });
+
+      wru.assert(A.storage(s.left).buffer === A.storage(s.right).buffer);
+      wru.assert(A.storage(s.left).byteOffset === 0);
+      wru.assert(A.storage(s.right).byteOffset === 3);
+      wru.assert(A.storage(s.left).byteLength === 3);
+      wru.assert(A.storage(s.right).byteLength === 3);
+
       wru.assert(s.left.length == 3);
       wru.assert(s.right.length == 3);
       wru.assert(s.right.byteOffset === 3);
@@ -248,6 +351,14 @@ wru.test([ {
       wru.assert(s.x === 5);
       wru.assert(s.o === o);
       wru.assert(S.storage === undefined);
+
+      wru.assert(S.variable === false);
+      wru.assert(S.opaque === true);
+      wru.assert(S.byteLength === undefined);
+      wru.assert(S.byteAlignment === undefined);
+      wru.assert(S.fieldOffsets === undefined);
+      wru.assert(S.fieldTypes.x === uint8);
+      wru.assert(S.fieldTypes.o === object);
     } }, {
     name: "Opaque types: mixed",
     test: function() {
@@ -276,6 +387,11 @@ wru.test([ {
     name: "Opaque array",
     test: function() {
       var A = new ArrayType(object, 100);
+      wru.assert(A.variable === false);
+      wru.assert(A.opaque === true);
+      wru.assert(A.storage === undefined);
+      wru.assert(A.byteLength === undefined);
+      wru.assert(A.byteOffset === undefined);
       var o = {};
       var a = new A();
       for(var i = 0; i < 100; i++) {
