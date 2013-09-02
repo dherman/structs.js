@@ -29,7 +29,6 @@ t[0].start.x++;
 ```
 
 Example:
-(future example, 'object' type is not implemented yet) 
 
 ```javascript
 var { StructType, uint32, float32, object } = TypedObjects;
